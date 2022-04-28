@@ -1,0 +1,7 @@
+<launch>
+  <param name="map_1_path" type="string" value="" />
+  <param name="map_2_path" type="string" value="" />
+  <param name="save_path" type="string" value="" />
+
+  <node name="merge_maps" pkg="graph_tools" required="true" type="merge_maps" output="screen" />
+</launch>

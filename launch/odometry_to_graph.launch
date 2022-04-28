@@ -1,0 +1,11 @@
+<launch>
+  <param name="odom_path" type="string" value="" />
+  <param name="save_path" type="string" value="" />
+  <param name="delta_x" type="double" value="2" />
+  <param name="delta_angle" type="double" value="30" />
+  <param name="downsample_resolution" type="double" value="0.0" />
+  <param name="inf_pos" type="double" value="10.0" />
+  <param name="inf_rot" type="double" value="20.0" />
+
+  <node name="odometry_to_graph" pkg="graph_tools" required="true" type="odometry_to_graph" output="screen" />
+</launch>
