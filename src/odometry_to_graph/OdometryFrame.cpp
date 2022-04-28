@@ -100,24 +100,24 @@ pcl::PointCloud<pcl::PointXYZI>::Ptr OdometryFrame::load_cloud(const std::string
     } else if (extension == ".txt") {
         std::ifstream ifs(filename);
         if(!ifs) {
-        std::cerr << "warning: failed to open " << filename << std::endl;
-        return nullptr;
+            std::cerr << "warning: failed to open " << filename << std::endl;
+            return nullptr;
         }
 
         pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>());
         while(!ifs.eof()) {
-        std::string line;
-        std::getline(ifs, line);
-        if(line.empty()) {
-            continue;
-        }
+            std::string line;
+            std::getline(ifs, line);
+            if(line.empty()) {
+                continue;
+            }
 
-        std::stringstream sst(line);
+            std::stringstream sst(line);
 
-        pcl::PointXYZI pt;
-        sst >> pt.x >> pt.y >> pt.z >> pt.intensity;
+            pcl::PointXYZI pt;
+            sst >> pt.x >> pt.y >> pt.z >> pt.intensity;
 
-        cloud->push_back(pt);
+            cloud->push_back(pt);
         }
 
         cloud->is_dense = false;

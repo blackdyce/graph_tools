@@ -129,14 +129,16 @@ bool OdometrySet::save_keyframes(const std::string& directory) const {
         boost::filesystem::copy_file(keyframes[i]->raw_cloud_path, keyframe_directory + "/raw.pcd");
 
         auto cloud = keyframes[i]->get_cloud();
+        
         if (cloud)
         {
             pcl::io::savePCDFileBinary(keyframe_directory + "/cloud.pcd", *cloud);
         }
 
         std::ofstream ofs(keyframe_directory + "/data");
+
         if(!ofs) {
-        return false;
+            return false;
         }
 
         ofs << "stamp " << keyframes[i]->stamp_sec << " " << keyframes[i]->stamp_usec << std::endl;
