@@ -7,6 +7,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS roscpp hdl_graph_slam roslib)
 find_package(G2O REQUIRED)
+find_package(gflags REQUIRED)
+find_package(glog REQUIRED)
 
 catkin_package(
 )
@@ -23,6 +25,7 @@ target_include_directories (odometry_to_graph PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/odometry_to_graph
   ${G2O_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
+  ${GLOG_INCLUDE_DIRS}
 )
 
 target_link_libraries(odometry_to_graph
@@ -30,6 +33,8 @@ target_link_libraries(odometry_to_graph
   ${G2O_CORE_LIBRARY}
   ${G2O_TYPES_SLAM3D}
   ${catkin_LIBRARIES}
+  ${GLOG_LIBRARIES}
+  gflags
 )
 
 # merge maps
@@ -43,6 +48,7 @@ target_include_directories (merge_maps PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/merge_map
   ${G2O_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
+  ${GLOG_INCLUDE_DIRS}
 )
 
 target_link_libraries(merge_maps
@@ -50,4 +56,6 @@ target_link_libraries(merge_maps
   ${G2O_CORE_LIBRARY}
   ${G2O_TYPES_SLAM3D}
   ${catkin_LIBRARIES}
+  ${GLOG_LIBRARIES}
+  gflags
 )

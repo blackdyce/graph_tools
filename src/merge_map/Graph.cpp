@@ -10,6 +10,9 @@
 #include <g2o/types/slam3d/edge_se3.h>
 #include <g2o/types/slam3d/vertex_se3.h>
 
+#include <pcl/io/pcd_io.h>
+#include <pcl/common/transforms.h>
+
 namespace merge_map {
 
   Graph::Graph() {
@@ -50,6 +53,8 @@ namespace merge_map {
         
       gpsIdsStream.close();
     }
+
+    return true;
   }
 
   bool Graph::merge(const Graph *const other) {
@@ -193,6 +198,25 @@ namespace merge_map {
     }
 
     return true;
+  }
+
+  bool Graph::save_pointcloud(const std::string& filename) {
+    std::cout << "save_pointcloud: " << filename << std::endl;
+
+    pcl::PointCloud<pcl::PointXYZI>::Ptr accumulated(new pcl::PointCloud<pcl::PointXYZI>());
+
+    for(const auto& keyframe : keyframes) {
+      pcl::PointCloud<pcl::PointXYZI>::Ptr transformed(new pcl::PointCloud<pcl::PointXYZI>());
+      pcl::transformPointCloud(*keyframe.second->cloud, *transformed, keyframe.second->node->estimate().cast<float>());
+
+      std::copy(transformed->begin(), transformed->end(), std::back_inserter(accumulated->points));
+    }
+
+    accumulated->is_dense = false;
+    accumulated->width = accumulated->size();
+    accumulated->height = 1;
+
+    return pcl::io::savePCDFileBinary(filename, *accumulated);
   }
 
 }

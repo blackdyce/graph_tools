@@ -1,7 +1,15 @@
 <launch>
-  <param name="map_1_path" type="string" value="" />
-  <param name="map_2_path" type="string" value="" />
-  <param name="save_path" type="string" value="" />
+  <arg name="map_1_path" default="" />
+  <arg name="map_2_path" default="" />
+  <arg name="save_path"  default="" />
+  <arg name="export_pcd" default="1" />
 
-  <node name="merge_maps" pkg="graph_tools" required="true" type="merge_maps" output="screen" />
+  <node pkg="graph_tools" type="merge_maps" name="merge_maps" required="true" output="screen" 
+    args="
+        -map_1_path $(arg map_1_path)
+        -map_2_path $(arg map_2_path)
+        -export_pcd $(arg export_pcd)
+        -save_path $(arg save_path)
+        " />
+
 </launch>

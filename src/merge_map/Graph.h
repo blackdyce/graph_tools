@@ -19,6 +19,8 @@ class Graph : protected hdl_graph_slam::GraphSLAM {
     bool save_all(const std::string &directory);
     bool merge(const Graph *const other);
 
+    bool save_pointcloud(const std::string& filename);
+
   private:
     bool load_graph(const std::string &directory);
     bool load_keyframes(const std::string& directory);

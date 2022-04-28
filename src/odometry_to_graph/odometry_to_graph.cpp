@@ -9,65 +9,53 @@
 #include <ros/package.h>
 #include <ros/ros.h>
 
+#include <gflags/gflags.h>
+#include <glog/logging.h>
+
+DEFINE_string(odom_path, "", "Description");
+DEFINE_string(save_path, "", "Description");
+DEFINE_double(delta_x, 1, "Description");
+DEFINE_double(delta_angle, 15, "Description");
+DEFINE_double(resolution, 0.3, "Description");
+DEFINE_double(inf_pos, 10, "Description");
+DEFINE_double(inf_rot, 20, "Description");
+
 int main(int argc, char** argv) {
   ros::init(argc, argv, "odometry_to_graph");
   ros::NodeHandle nh;
 
-  std::string odom_path;
-  std::string save_path;
-  double delta_x;
-  double delta_angle;
-  double downsample_resolution;
-  double inf_pos;
-  double inf_rot;
+  google::InitGoogleLogging(argv[0]);
+  google::ParseCommandLineFlags(&argc, &argv, true);
 
-  nh.getParam("odom_path", odom_path);
-  nh.getParam("save_path", save_path);
-  nh.getParam("delta_x", delta_x);
-  nh.getParam("delta_angle", delta_angle);
-  nh.getParam("downsample_resolution", downsample_resolution);
-  nh.getParam("inf_pos", inf_pos);
-  nh.getParam("inf_rot", inf_rot);
+  CHECK(!FLAGS_odom_path.empty()) << "-odom_path is missing.";
+  CHECK(!FLAGS_save_path.empty()) << "-save_path is missing.";
+  
+  boost::filesystem::remove_all(FLAGS_save_path);
+  boost::filesystem::create_directories(FLAGS_save_path);
 
-  if (odom_path.empty())
+  if (!boost::filesystem::is_directory(FLAGS_save_path))
   {
-    std::cerr << "odom_path is empty" << std::endl;
-    
+    std::cerr << "save_path is not found: " << FLAGS_save_path << std::endl;
     return 0;
   }
 
-  if (save_path.empty())
-  {
-    std::cerr << "save_path is empty" << std::endl;
-    return 0;
-  }
-
-  boost::filesystem::remove_all(save_path);
-  boost::filesystem::create_directories(save_path);
-
-  if (!boost::filesystem::is_directory(save_path))
-  {
-    std::cerr << "save_path is not found: " << save_path << std::endl;
-    return 0;
-  }
-
-
-  delta_angle *= EIGEN_PI / 180.0f;
+  FLAGS_delta_angle *= EIGEN_PI / 180.0f;
 
   std::cout << "oarameters:" << std::endl;
-  std::cout << "odom_path: " << odom_path << std::endl;
-  std::cout << "save_path: " << save_path << std::endl;
-  std::cout << "delta_x: " << delta_x << std::endl;
-  std::cout << "delta_angle: " << delta_angle << std::endl;
-  std::cout << "downsample_resolution: " << downsample_resolution << std::endl;
-  std::cout << "inf_pos: " << inf_pos << std::endl;
-  std::cout << "inf_rot: " << inf_rot << std::endl << std::endl;
+  std::cout << "odom_path: " << FLAGS_odom_path << std::endl;
+  std::cout << "save_path: " << FLAGS_save_path << std::endl;
+  std::cout << "delta_x: " << FLAGS_delta_x << std::endl;
+  std::cout << "delta_angle: " << FLAGS_delta_angle << std::endl;
+  std::cout << "resolution: " << FLAGS_resolution << std::endl;
+  std::cout << "inf_pos: " << FLAGS_inf_pos << std::endl;
+  std::cout << "inf_rot: " << FLAGS_inf_rot << std::endl << std::endl;
 
   pcl::console::setVerbosityLevel(pcl::console::L_ERROR);
   
-  auto odometry_set = std::make_unique<odometry_to_graph::OdometrySet>(downsample_resolution, delta_x, delta_angle, inf_pos, inf_rot);
-  odometry_set->load(odom_path);
-  odometry_set->save(save_path);
+  auto odometry_set = std::make_unique<odometry_to_graph::OdometrySet>(FLAGS_resolution, 
+    FLAGS_delta_x, FLAGS_delta_angle, FLAGS_inf_pos, FLAGS_inf_rot);
+  odometry_set->load(FLAGS_odom_path);
+  odometry_set->save(FLAGS_save_path);
 
   std::cout << "Done." << std::endl;
 

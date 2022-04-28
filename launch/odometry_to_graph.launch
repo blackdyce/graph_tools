@@ -1,11 +1,20 @@
 <launch>
-  <param name="odom_path" type="string" value="" />
-  <param name="save_path" type="string" value="" />
-  <param name="delta_x" type="double" value="2" />
-  <param name="delta_angle" type="double" value="30" />
-  <param name="downsample_resolution" type="double" value="0.0" />
-  <param name="inf_pos" type="double" value="10.0" />
-  <param name="inf_rot" type="double" value="20.0" />
+  <arg name="odom_path"   default="" />
+  <arg name="save_path"   default="" />
+  <arg name="delta_x"     default="2" />
+  <arg name="delta_angle" default="10" />
+  <arg name="resolution"  default="0.0" />
+  <arg name="inf_pos"     default="10.0" />
+  <arg name="inf_rot"     default="20.0" />
 
-  <node name="odometry_to_graph" pkg="graph_tools" required="true" type="odometry_to_graph" output="screen" />
+  <node pkg="graph_tools" type="odometry_to_graph" name="odometry_to_graph" required="True" output="screen"
+    args="
+        -delta_x $(arg delta_x)
+        -delta_angle $(arg delta_angle)
+        -resolution $(arg resolution)
+        -inf_pos $(arg inf_pos)
+        -inf_rot $(arg inf_rot)
+        -odom_path $(arg odom_path)
+        -save_path $(arg save_path)
+        " />
 </launch>
